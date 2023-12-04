@@ -59,22 +59,27 @@ fn main(){
 
 
     let batch: String = get_http(&get_url, 1, TO).expect("Connection dropped");
-    fs::write("temp.csv", batch).expect("Unable to write file");
+    
+    let mut oid_vec : Vec<i32> = vec![];
+    let mut tms_vec : Vec<i32> = vec![];
+    let mut lon_vec : Vec<f32> = vec![];
+    let mut lat_vec : Vec<f32> = vec![];
 
-    let v = vec![
-        Field::new("oid", DataType::Int32),
-        Field::new("tms", DataType::Int32),
-        Field::new("lon", DataType::Float32),
-        Field::new("lat", DataType::Float32),
-    ];
+    for l in batch.lines() {
+        let s : Vec<&str> = l.split(",").collect();
+        oid_vec.push(s[0].parse::<i32>().unwrap());
+        tms_vec.push(s[1].parse::<i32>().unwrap());
+        lon_vec.push(s[2].parse::<f32>().unwrap());
+        lat_vec.push(s[3].parse::<f32>().unwrap());
+    }
 
-    let schema = Schema::from_iter(v.into_iter());
-
-    let mut trajdf : TrajDataFrame = TrajDataFrame::new_from_df(
-        CsvReader::from_path("temp.csv")
-            .unwrap()
-            .with_dtypes(Some(Arc::new(schema)))
-            .has_header(true).finish().unwrap().select(["oid","lon","lat","tms"]).unwrap()
+    let trajdf : TrajDataFrame = TrajDataFrame::new_from_df(
+        df!(
+            "oid" => oid_vec,
+            "tms" => tms_vec,
+            "lon" => lon_vec,
+            "lat" => lat_vec
+        ).unwrap()
     );
 
     let risks;
