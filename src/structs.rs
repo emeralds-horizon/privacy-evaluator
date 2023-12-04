@@ -1,10 +1,12 @@
 use itertools::izip;
 use libm::atan2f;
-use proj::Proj;
+//use proj::Proj;
 use serde::Deserialize;
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
-use tch::{CModule, Tensor};
+//use tch::{CModule, Tensor};
+use polars::prelude::*;
+use polars::frame::DataFrame;
 
 #[derive(Deserialize, Clone)]
 pub struct Record {
@@ -82,10 +84,10 @@ impl Coordinate {
         }
     }
 
-    pub fn project(&self, from: &str, to: &str) -> Coordinate {
-        let ft_to_m = Proj::new_known_crs(&from, &to, None).unwrap();
-        Coordinate::from_tuple(ft_to_m.convert((self.x, self.y)).unwrap())
-    }
+    // pub fn project(&self, from: &str, to: &str) -> Coordinate {
+    //     let ft_to_m = Proj::new_known_crs(&from, &to, None).unwrap();
+    //     Coordinate::from_tuple(ft_to_m.convert((self.x, self.y)).unwrap())
+    // }
 }
 
 #[derive(Debug, Clone)]
@@ -117,6 +119,41 @@ impl Trajectory {
             gps: vec![vec![]],
         }
     }
+
+    //TO DELETE PROBABLY
+    // pub fn to_df(&self, inlude_oid:Option<bool>) -> DataFrame {
+    //     let inc = include_oid.unwrap_or(false);
+
+    //     let csv_str = String::from("");
+
+    //     for i in 0..self.speed.len() {
+    //         println!(
+    //             "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{:?}",
+    //             self.oid,
+    //             self.coordinates[i].x,
+    //             self.coordinates[i].y,
+    //             self.speed[i],
+    //             self.bearing[i],
+    //             self.stoped[i],
+    //             self.trips[i],
+    //             self.timestamps[i],
+    //             self.pois[i],
+    //             self.gps[i]
+    //         )
+    //     }
+
+    //     let csv_str = self.to_csv()
+
+    //     df!(
+    //         "coordinates" => self.coordinates,
+    //         "timestamps" => self.timestamps,
+    //         "speed" => self.speed,
+    //         "bearing" => self.bearing,
+    //         "stoped" => self.stoped,
+    //         "trips" => self.trips,
+    //         "pois" => self.pois
+    //     )
+    // }
 
     pub fn new_empty(oid: i32, max_size: usize) -> Trajectory {
         Trajectory {
@@ -436,73 +473,112 @@ impl TrajCollection {
         flocked_oids
     }
 
-    pub fn predict_for_oid(&self, oid: i32, model: &CModule) -> Option<Coordinate> {
-        // eprintln!();
+    // pub fn predict_for_oid(&self, oid: i32, model: &CModule) -> Option<Coordinate> {
+    //     // eprintln!();
 
-        let traj = self.object.get(&oid)?;
+    //     let traj = self.object.get(&oid)?;
 
-        if traj.coordinates.len() < 13 {
-            return None;
-        }
+    //     if traj.coordinates.len() < 13 {
+    //         return None;
+    //     }
 
-        let mut xs = vec![];
-        let mut ys = vec![];
-        let mut ts = vec![];
+    //     let mut xs = vec![];
+    //     let mut ys = vec![];
+    //     let mut ts = vec![];
 
-        let ft_to_m = Proj::new_known_crs("EPSG:4326", "EPSG:3857", None).unwrap();
+    //     let ft_to_m = Proj::new_known_crs("EPSG:4326", "EPSG:3857", None).unwrap();
 
-        let mut data = vec![];
+    //     let mut data = vec![];
 
-        for coord in traj.coordinates[traj.coordinates.len() - 13..].iter() {
-            let projected: (f32, f32) = ft_to_m.convert((coord.x, coord.y)).unwrap();
-            xs.push(projected.0);
-            ys.push(projected.1);
-        }
+    //     for coord in traj.coordinates[traj.coordinates.len() - 13..].iter() {
+    //         let projected: (f32, f32) = ft_to_m.convert((coord.x, coord.y)).unwrap();
+    //         xs.push(projected.0);
+    //         ys.push(projected.1);
+    //     }
 
-        for timestamp in traj.timestamps[traj.timestamps.len() - 13..].iter() {
-            ts.push(timestamp.clone());
-        }
+    //     for timestamp in traj.timestamps[traj.timestamps.len() - 13..].iter() {
+    //         ts.push(timestamp.clone());
+    //     }
 
-        let tmp = ts
-            .iter()
-            .zip(ts.iter().skip(1))
-            .map(|(tsa, tsb)| (tsb - tsa) as f32 / 1800.0)
-            .collect::<Vec<_>>();
+    //     let tmp = ts
+    //         .iter()
+    //         .zip(ts.iter().skip(1))
+    //         .map(|(tsa, tsb)| (tsb - tsa) as f32 / 1800.0)
+    //         .collect::<Vec<_>>();
 
-        for (a, b, c, d) in izip!(
-            tmp[1..11].iter(),
-            tmp[2..12].iter(),
-            xs.iter().skip(2).zip(xs.iter().skip(3)),
-            ys.iter().skip(2).zip(ys.iter().skip(3))
-        ) {
-            data.push(a.to_owned() as f32);
-            data.push(b.to_owned() as f32);
-            data.push((c.1 - c.0 - 0.604) / 245.366);
-            data.push((d.1 - d.0 - 1.619) / 232.757);
-        }
-        // let mut binding = data.as_mut_slice().chunks_mut(11).collect::<Vec<_>>().as_slice();
-        // let data = binding.as_slice();
+    //     for (a, b, c, d) in izip!(
+    //         tmp[1..11].iter(),
+    //         tmp[2..12].iter(),
+    //         xs.iter().skip(2).zip(xs.iter().skip(3)),
+    //         ys.iter().skip(2).zip(ys.iter().skip(3))
+    //     ) {
+    //         data.push(a.to_owned() as f32);
+    //         data.push(b.to_owned() as f32);
+    //         data.push((c.1 - c.0 - 0.604) / 245.366);
+    //         data.push((d.1 - d.0 - 1.619) / 232.757);
+    //     }
+    //     // let mut binding = data.as_mut_slice().chunks_mut(11).collect::<Vec<_>>().as_slice();
+    //     // let data = binding.as_slice();
 
-        let output = Vec::<f32>::from(
-            model
-                .forward_ts(&[
-                    Tensor::of_slice(data.as_slice()).reshape(&[1, 10, 4]),
-                    Tensor::of_slice(&[1]),
-                ])
-                .unwrap(),
-        );
+    //     let output = Vec::<f32>::from(
+    //         model
+    //             .forward_ts(&[
+    //                 Tensor::of_slice(data.as_slice()).reshape(&[1, 10, 4]),
+    //                 Tensor::of_slice(&[1]),
+    //             ])
+    //             .unwrap(),
+    //     );
 
-        let (predlondiff, predlatdiff) = (output[0] * 245.366 + 0.604, output[1] * 232.757 + 1.619);
+    //     let (predlondiff, predlatdiff) = (output[0] * 245.366 + 0.604, output[1] * 232.757 + 1.619);
 
-        let predlon = xs.last().unwrap() + predlondiff;
-        let predlat = ys.last().unwrap() + predlatdiff;
+    //     let predlon = xs.last().unwrap() + predlondiff;
+    //     let predlat = ys.last().unwrap() + predlatdiff;
 
-        let m_to_deg = Proj::new_known_crs("EPSG:3857", "EPSG:4326", None).unwrap();
+    //     let m_to_deg = Proj::new_known_crs("EPSG:3857", "EPSG:4326", None).unwrap();
 
-        Some(Coordinate::from_tuple(
-            m_to_deg.convert((predlon, predlat)).unwrap(),
-        ))
-    }
+    //     Some(Coordinate::from_tuple(
+    //         m_to_deg.convert((predlon, predlat)).unwrap(),
+    //     ))
+    // }
+
+    // pub fn privacy_eval(&self, oid: i32){
+    //     let traj = self.object.get(&oid)?;
+
+    //     let indices = test
+    //         .iter()
+    //         .enumerate()
+    //         .filter(|(_, &r)| r == 0)
+    //         .map(|(index, _)| index)
+    //         .collect::<Vec<_>>();
+        
+    //     oid,
+    //     max_size,
+    //     coordinates: vec![],
+    //     timestamps: vec![],
+    //     speed: vec![],
+    //     bearing: vec![],
+    //     stoped: vec![],
+    //     trips: vec![],
+    //     pois: vec![],
+    //     gps: vec![],
+        
+    //     let coordinates_f = indices.iter().map(|&index| traj.coordinates[index]).collect();
+    //     let timestamps_f = indices.iter().map(|&index| traj.timestamps[index]).collect();
+    //     let speed_f = indices.iter().map(|&index| traj.speed[index]).collect();
+    //     let bearing_f = indices.iter().map(|&index| traj.bearing[index]).collect();
+    //     let stoped_f = indices.iter().map(|&index| traj.stoped[index]).collect();
+    //     let trips_f = indices.iter().map(|&index| traj.trips[index]).collect();
+    //     let pois_f = indices.iter().map(|&index| traj.pois[index]).collect();
+    //     let gps_f = indices.iter().map(|&index| traj.gps[index]).collect();
+
+    //     let res : Vec<_> = indices.
+    //         iter().
+    //         map(|&index| )
+        
+    //     for i in 0..traj.stoped.length(){
+    //         if 
+    //     }
+    // }
 }
 
 pub struct Pois {
@@ -544,5 +620,67 @@ impl Pois {
         } else {
             -1
         }
+    }
+}
+
+pub struct TrajDataFrame {
+    pub df : DataFrame,
+}
+
+impl TrajDataFrame {
+    pub fn new_empty() -> TrajDataFrame {
+        TrajDataFrame{ df:DataFrame::default()}
+    }
+
+    pub fn new_from_df(dataframe : DataFrame) -> TrajDataFrame {
+        TrajDataFrame{df:dataframe}
+    }
+
+    pub fn new_adv_from_TrajCollection(trajcol: TrajCollection, advanced: Option<bool>) -> TrajDataFrame {
+        let adv:bool = advanced.unwrap_or(false);
+        
+        let (mut oid_all, mut lat_all, mut lng_all, mut tms_all, mut stop_all, mut speed_all) = (
+            Vec::new(),
+            Vec::new(),
+            Vec::new(),
+            Vec::new(),
+            Vec::new(),
+            Vec::new(),
+        );
+
+        for (oid, mut trajectory) in trajcol.object {
+            oid_all.extend(vec![oid; trajectory.timestamps.len()]);
+            let (lons, lats): (Vec<_>, Vec<_>) = trajectory.coordinates.into_iter().map(|Coordinate { x, y }| (x, y)).unzip();
+            lng_all.extend(lons);
+            lat_all.extend(lats);
+            tms_all.extend(trajectory.timestamps);
+        
+            if adv {
+                stop_all.extend(trajectory.stoped);
+                speed_all.extend(trajectory.speed);
+            }
+        }        
+
+        let df = if adv {
+            df!
+            (
+                "oid" => oid_all.into_iter().map(|x| x as i32).collect::<Vec<i32>>(),
+                "lon" => lng_all,
+                "lat" => lat_all,
+                "tms" => tms_all,
+                "stop" => stop_all.into_iter().map(|x| x as i32).collect::<Vec<i32>>(),
+                "speed" => speed_all
+            )
+        } else {
+            df!
+            (
+                "oid" => oid_all.into_iter().map(|x| x as i32).collect::<Vec<i32>>(),
+                "lon" => lng_all,
+                "lat" => lat_all,
+                "tms" => tms_all
+            )
+        };
+        
+        return TrajDataFrame { df: df.unwrap() };
     }
 }
