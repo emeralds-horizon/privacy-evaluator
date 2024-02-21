@@ -9,11 +9,11 @@ This repository contains the first version of the service Privacy-aware In Situ 
 ## Table of Contents
 
 1. [ Requirements ](#requirements)
-2. [ I/O Structure ](#ios)
-3. [ I/O Interfaces and Interactions](#ioii)
+2. [ Sample data input/output structures ](#ios)
+3. [ Input/Output interfaces & interactions ](#ioii)
 4. [ Deployment ](#deployment)
-5. [ Usage ](#usage)
-6. [Authors](#authors)
+5. [ Usage - Executing program ](#usage)
+6. [ Authors ](#authors)
 
 <a name="requirements"></a>
 ## Requirements
