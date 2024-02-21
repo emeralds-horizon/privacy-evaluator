@@ -9,7 +9,11 @@ This repository contains the first version of the service Privacy-aware In Situ 
 ## Table of Contents
 
 1. [ Requirements ](#requirements)
-2. [ Usage ](#usage)
+2. [ I/O Structure ](#ios)
+3. [ I/O Interfaces and Interactions](#ioii)
+4. [ Deployment ](#deployment)
+5. [ Usage ](#usage)
+6. [Authors](#authors)
 
 <a name="requirements"></a>
 ## Requirements
@@ -17,7 +21,7 @@ This repository contains the first version of the service Privacy-aware In Situ 
 - A configured Rust environment (the specific requirements are inside the Cargo.toml file)
 - An Orchestrator server running locally for the communication of the components of the tool
 
-
+<a name="ios"></a>
 ## Sample data input/output structures
 
 The tool consists of two components, both of which communicate solely with the Orchestrator server. Thus, any data exchange happens only between each component and the server.
@@ -28,12 +32,12 @@ The output of the first component is the same dataset as the input with two addi
 
 The second component uses as input the output CSV file of the first component. The output of the second component is a CSV file containing the identification probability of each unique id of the input dataset. The output file contains a two-column dataset, the first column being the unique ids and the second being the respective identification probability.
 
-
+<a name="ioii"></a>
 ## Input/Output interfaces & interactions
 
 The tool's components communicate solely with the Orchestrator server. The first component receives data from the Orchestrator, then uploads the output data to it. Subsequently, the second component receives as input the output data of the previous component and once again uploads the resulting data to the server.
 
-
+<a name="deployment"></a>
 ## Deployment
 
 The two components run easily within a Rust environment through Cargo. The only configuration that is important is the port of the Orchestrator server that is needed for the communication of the components of the tool.
@@ -189,7 +193,7 @@ cargo run -- locationtime input output 4 None month
 cargo run -- locationsequence input output None 1,2,3,4
 ```
 
-
+<a name="authors"></a>
 ## Authors
 
 UPRC
