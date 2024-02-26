@@ -41,14 +41,29 @@ The tool's components communicate solely with the Orchestrator server. The first
 ## Deployment
 
 The two components run easily within a Rust environment through Cargo. The only configuration that is important is the port of the Orchestrator server that is needed for the communication of the components of the tool.
+Also by running the pipeline script, the whole 2-part pipeline runs in two separate docker containers.
 
 <a name="usage"></a>
 ## Usage - Executing program
 
+### Docker Execution
+
+Usage:
+```
+bash pipeline.sh
+```
+This bash script runs sequentially two docker containers, one responsible for the preprocessing component and one responsible for the privacy risk evaluation.
+
+In case we want to run each component independently, the instructions are specified below.
+
 ### Preprocessing Component
 
 Usage:
-
+```
+cd preprocessing_component
+bash run.sh
+```
+OR
 ```
 cd preprocessing_component
 cargo run -- [ORCHESTRATOR_INPUT] [ORCHESTRATOR_OUTPUT] [FILTERING_PARAMETERS] [STOP_DETECTION_PARAMETERS] [CLUSTERING_PARAMETERS]
@@ -115,7 +130,11 @@ cargo run -- input output [100.0,None,45.3,None,113.2] [0.7] [0.001,10]
 ### Privacy Evaluation
 
 Usage:
-
+```
+cd privacy_evaluation_component
+bash run.sh
+```
+OR
 ```
 cd privacy_evaluation_component
 cargo run -- [ATTACK_ARG] [ORCHESTRATOR_INPUT] [ORCHESTRATOR_OUTPUT] [KNOWLEDGE_LENGTH] [TARGETS] [TIME_PRECISION]
