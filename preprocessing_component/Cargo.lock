@@ -883,22 +883,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "marshal"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "csv",
- "dbscan",
- "itertools",
- "kdam",
- "libm",
- "ndarray",
- "polars",
- "reqwest",
- "serde",
-]
-
-[[package]]
 name = "matrixmultiply"
 version = "0.3.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1116,6 +1100,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ff011a302c396a5197692431fc1948019154afc178baf7d8e37367442a4601cf"
 
 [[package]]
+name = "openssl-src"
+version = "300.2.3+3.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5cff92b6f71555b61bb9315f7c64da3ca43d87531622120fea0195fc761b4843"
+dependencies = [
+ "cc",
+]
+
+[[package]]
 name = "openssl-sys"
 version = "0.9.97"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1123,6 +1116,7 @@ checksum = "c3eaad34cdd97d81de97964fc7f29e2d104f483840d906ef56daa1912338460b"
 dependencies = [
  "cc",
  "libc",
+ "openssl-src",
  "pkg-config",
  "vcpkg",
 ]
@@ -1439,6 +1433,23 @@ name = "ppv-lite86"
 version = "0.2.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5b40af805b3121feab8a3c29f04d8ad262fa8e0561883e7653e024ae4479e6de"
+
+[[package]]
+name = "preprocessing"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "csv",
+ "dbscan",
+ "itertools",
+ "kdam",
+ "libm",
+ "ndarray",
+ "openssl",
+ "polars",
+ "reqwest",
+ "serde",
+]
 
 [[package]]
 name = "proc-macro2"

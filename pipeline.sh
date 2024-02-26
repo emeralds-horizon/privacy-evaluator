@@ -1,0 +1,1 @@
+./preprocessing_component/run.sh && ./privacy_evaluation_component/run.sh
