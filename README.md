@@ -19,12 +19,12 @@ This repository contains the first version of the service Privacy-aware In Situ 
 ## Requirements
 
 - A configured Rust environment (the specific requirements are inside the Cargo.toml file)
-- An Orchestrator server running locally for the communication of the components of the tool
+- A Data broker server running locally for the communication of the components of the tool
 
 <a name="ios"></a>
 ## Sample data input/output structures
 
-The tool consists of two components, both of which communicate solely with the Orchestrator server. Thus, any data exchange happens only between each component and the server.
+The tool consists of two components, both of which communicate solely with the Data broker server. Thus, any data exchange happens only between each component and the server.
 
 The first component, used for preprocessing, requires as input a CSV dataset with 4 columns representing the id, timestamp, longitude and latitude. The first line should be the headers of the columns (oid, t, lon, lat) and then columns with integer, integer, decimal and decimal values respectively.
 
@@ -35,12 +35,12 @@ The second component uses as input the output CSV file of the first component. T
 <a name="ioii"></a>
 ## Input/Output interfaces & interactions
 
-The tool's components communicate solely with the Orchestrator server. The first component receives data from the Orchestrator, then uploads the output data to it. Subsequently, the second component receives as input the output data of the previous component and once again uploads the resulting data to the server.
+The tool's components communicate solely with the Data broker server. The first component receives data from the server, then uploads the output data to it. Subsequently, the second component receives as input the output data of the previous component and once again uploads the resulting data to the server.
 
 <a name="deployment"></a>
 ## Deployment
 
-The two components run easily within a Rust environment through Cargo. The only configuration that is important is the port of the Orchestrator server that is needed for the communication of the components of the tool.
+The two components run easily within a Rust environment through Cargo. The only configuration that is important is the port of the Data broker server that is needed for the communication of the components of the tool.
 Also by running the pipeline script, the whole 2-part pipeline runs in two separate docker containers.
 
 <a name="usage"></a>
@@ -66,13 +66,13 @@ bash run.sh
 OR
 ```
 cd preprocessing_component
-cargo run -- [ORCHESTRATOR_INPUT] [ORCHESTRATOR_OUTPUT] [FILTERING_PARAMETERS] [STOP_DETECTION_PARAMETERS] [CLUSTERING_PARAMETERS]
+cargo run -- [DATA_BROKER_INPUT] [DATA_BROKER_OUTPUT] [FILTERING_PARAMETERS] [STOP_DETECTION_PARAMETERS] [CLUSTERING_PARAMETERS]
 ```
 
-ORCHESTRATOR_INPUT:<br>
-A string that corresponds to the name of an existing dataset on the orchestrator that will be used as input<br><br>
-ORCHESTRATOR_OUTPUT:<br>
-A string that corresponds to the name of the dataset that will be uploaded to the orchestrator
+DATA_BROKER_INPUT:<br>
+A string that corresponds to the name of an existing dataset on the server that will be used as input<br><br>
+DATA_BROKER_OUTPUT:<br>
+A string that corresponds to the name of the dataset that will be uploaded to the server
 <br><br>
 FILTERING_PARAMETERS:<br>
 Format: [A,B,C,D,E] where:
@@ -137,7 +137,7 @@ bash run.sh
 OR
 ```
 cd privacy_evaluation_component
-cargo run -- [ATTACK_ARG] [ORCHESTRATOR_INPUT] [ORCHESTRATOR_OUTPUT] [KNOWLEDGE_LENGTH] [TARGETS] [TIME_PRECISION]
+cargo run -- [ATTACK_ARG] [DATA_BROKER_INPUT] [DATA_BROKER_OUTPUT] [KNOWLEDGE_LENGTH] [TARGETS] [TIME_PRECISION]
 ```
 
 ATTACK_ARG:
@@ -151,10 +151,10 @@ ATTACK_ARG:
 </ul>
 
 
-ORCHESTRATOR_INPUT:<br>
-A string that corresponds to the name of an existing dataset on the orchestrator that will be used as input<br><br>
-ORCHESTRATOR_OUTPUT:<br>
-A string that corresponds to the name of the dataset that will be uploaded to the orchestrator
+DATA_BROKER_INPUT:<br>
+A string that corresponds to the name of an existing dataset on the server that will be used as input<br><br>
+DATA_BROKER_OUTPUT:<br>
+A string that corresponds to the name of the dataset that will be uploaded to the server
 <br><br>
 KNOWLEDGE_LENGTH:
 
