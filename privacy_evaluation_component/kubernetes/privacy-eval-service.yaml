@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: privacy-evaluation
+spec:
+  selector:
+    app: privacy-evaluation
+  ports:
+    - port: 9081
+      targetPort: 8080
+        #nodePort: 30080
+        #type: NodePort

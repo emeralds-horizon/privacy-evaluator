@@ -1,0 +1,22 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: privacy-evaluation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: privacy-evaluation
+  template:
+    metadata:
+      labels:
+        app: privacy-evaluation
+    spec:
+      containers:
+        - name: privacy-evaluation-service
+          image: ghcr.io/emeralds-horizon/privacy-evaluator:main
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+      imagePullSecrets:
+        - name: emeralds-repo-secret

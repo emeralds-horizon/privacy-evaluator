@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: preprocess-privacy-evaluation
+spec:
+  selector:
+    app: preprocess-privacy-evaluation
+  ports:
+    - port: 9081
+      targetPort: 8080
+        #nodePort: 30080
+        #type: NodePort
