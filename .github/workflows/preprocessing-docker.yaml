@@ -23,9 +23,6 @@ jobs:
   image-build-n-push:
     name: Build and Push a docker image of an Emerald
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./privacy_evaluation_component
         
     permissions:
       contents: write
