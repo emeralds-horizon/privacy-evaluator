@@ -117,7 +117,7 @@ jobs:
 
       - name: Update Kubernetes manifest with new image
         run: |
-          yq e '.spec.template.spec.containers[0].image = "${{ steps.meta.outputs.tags }}"' -i ./kubernetes/privacy_evaluation_component/privacy-eval-deployment.yaml
+          yq e '.spec.template.spec.containers[0].image = "${{ steps.meta.outputs.tags }}"' -i ./privacy_evaluation_component/kubernetes/privacy-eval-deployment.yaml
           
       - name: Configure git
         run: |
@@ -128,7 +128,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git add ./kubernetes/privacy_evaluation_component/privacy-eval-deployment.yaml
+          git add ./privacy_evaluation_component/kubernetes/privacy-eval-deployment.yaml
           git commit -m "Update Kubernetes manifest with new image tag ${{ steps.meta.outputs.tags }}"
           git push origin ${{ github.ref }}
   
