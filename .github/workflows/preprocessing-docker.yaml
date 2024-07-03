@@ -28,7 +28,7 @@ jobs:
         working-directory: ./privacy_evaluation_component
         
     permissions:
-      contents: read
+      contents: write
       packages: write
       # This is used to complete the identity challenge
       # with sigstore/fulcio when running outside of PRs.
@@ -105,7 +105,7 @@ jobs:
 
       - name: Update Kubernetes manifest with new image
         run: |
-          yq e '.spec.template.spec.containers[0].image = "${{ steps.meta.outputs.tags }}"' -i ./kubernetes/preprocessing_component/preprocess-privacy-eval-deployment.yaml
+          yq e '.spec.template.spec.containers[0].image = "${{ steps.meta.outputs.tags }}"' -i ./preprocessing_component/kubernetes/preprocess-privacy-eval-deployment.yaml
           
       - name: Configure git
         run: |
@@ -116,6 +116,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git add ./kubernetes/preprocessing_component/preprocess-privacy-eval-deployment.yaml
+          git add ./preprocessing_component/kubernetes/preprocess-privacy-eval-deployment.yaml
           git commit -m "Update Kubernetes manifest with new image tag ${{ steps.meta.outputs.tags }}"
           git push origin ${{ github.ref }}
