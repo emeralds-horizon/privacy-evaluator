@@ -13,7 +13,7 @@ permissions:
 env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
-  IMAGE_NAME: preprocessing-privacy-eval
+  IMAGE_NAME: ${{ github.repository }}-preprocessing
   ENABLE_SCOUT_REPORT: ${{ vars.ENABLE_SCOUT_REPORT }}
   DOCKER_USER: ${{ secrets.DOCKER_USER }}
   DOCKER_PAT: ${{ secrets.DOCKER_PAT }}
