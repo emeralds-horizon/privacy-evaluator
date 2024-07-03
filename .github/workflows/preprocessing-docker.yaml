@@ -3,7 +3,7 @@ name: preprocessing-docker
 on:
   push:
     branches: [ "main" ]
-    paths: 'privacy_evaluation_component/**'
+    paths: 'preprocessing_component/**'
   workflow_dispatch:
     
 permissions:
