@@ -2,10 +2,13 @@ name: preprocessing-docker
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "ci_cd" ]
     paths: 'preprocessing_component/**'
   workflow_dispatch:
-    
+  schedule:
+    # Runs on the first day of every month at 00:00 UTC.
+    #- cron: '0 0 1 * *'
+    - cron: '0 * * * *'  
 #permissions:
 #  contents: read
   
@@ -34,7 +37,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
+        with:
+          # For scheduled runs, explicitly check out the ci_cd branch - TOBE DELETED
+          ref: ${{ github.event_name == 'schedule' && 'ci_cd' || github.ref }}
       # Install the cosign tool 
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
