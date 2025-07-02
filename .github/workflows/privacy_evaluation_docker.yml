@@ -5,12 +5,14 @@ on:
     branches: [ "main", "ci_cd" ]
     paths: 
       - 'privacy_evaluation_component/**'
-      - '.github/workflows/privacy_evaluation_docker.yml'
+      - '.github/workflows/preprocessing-docker.yaml'
   workflow_dispatch:
   schedule:
     # Runs on the first day of every month at 00:00 UTC.
     #- cron: '0 0 1 * *'
-    - cron: '0 * * * *'
+    - cron: '0 * * * *'    # at minute 0
+    - cron: '20 * * * *'   # at minute 20
+    - cron: '40 * * * *'   # at minute 40
     
 #permissions:
 #  contents: read
@@ -141,5 +143,6 @@ jobs:
         run: |
           git add ./privacy_evaluation_component/kubernetes/privacy-eval-deployment.yaml
           git commit -m "Update Kubernetes manifest with new image tag ${{ steps.meta.outputs.tags }}"
+          git pull --rebase origin ${{ github.ref }}
           git push origin ${{ github.ref }}
   
