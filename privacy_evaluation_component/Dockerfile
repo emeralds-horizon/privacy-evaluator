@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update
+RUN apt update && apt upgrade -y
 # RUN update-alternatives --remove-all gcc 
 # RUN update-alternatives --remove-all g++
 RUN apt-get install -y \

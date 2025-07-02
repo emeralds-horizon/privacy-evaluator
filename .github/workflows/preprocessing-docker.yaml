@@ -20,7 +20,7 @@ env:
 
 jobs:
   
-  image-build-n-push:
+  image-build-n-push-preprocessing:
     name: Build and Push a docker image of an Emerald
     runs-on: ubuntu-latest
         
