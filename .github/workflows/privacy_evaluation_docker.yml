@@ -2,9 +2,15 @@ name: privacy-evaluation-docker
 
 on:
   push:
-    branches: [ "main" ]
-    paths: 'privacy_evaluation_component/**'
+    branches: [ "main", "ci_cd" ]
+    paths: 
+      - 'privacy_evaluation_component/**'
+      - '.github/workflows/preprocessing-docker.yaml'
   workflow_dispatch:
+  schedule:
+    - cron: '0 2 1 * *'
+    - cron: '0 * * * *'    # at minute 0
+
     
 #permissions:
 #  contents: read
@@ -20,7 +26,7 @@ env:
 
 jobs:
   
-  image-build-n-push:
+  image-build-n-push-privacy-evaluation:
     name: Build and Push a docker image of an Emerald
     runs-on: ubuntu-latest
         
@@ -132,5 +138,6 @@ jobs:
         run: |
           git add ./privacy_evaluation_component/kubernetes/privacy-eval-deployment.yaml
           git commit -m "Update Kubernetes manifest with new image tag ${{ steps.meta.outputs.tags }}"
+          git pull --rebase origin ${{ github.ref }}
           git push origin ${{ github.ref }}
   
