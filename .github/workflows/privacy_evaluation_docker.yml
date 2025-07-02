@@ -8,11 +8,9 @@ on:
       - '.github/workflows/preprocessing-docker.yaml'
   workflow_dispatch:
   schedule:
-    # Runs on the first day of every month at 00:00 UTC.
-    #- cron: '0 0 1 * *'
+    - cron: '0 2 1 * *'
     - cron: '0 * * * *'    # at minute 0
-    - cron: '20 * * * *'   # at minute 20
-    - cron: '40 * * * *'   # at minute 40
+
     
 #permissions:
 #  contents: read
