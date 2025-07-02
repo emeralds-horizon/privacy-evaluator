@@ -3,7 +3,9 @@ name: preprocessing-docker
 on:
   push:
     branches: [ "main", "ci_cd" ]
-    paths: 'preprocessing_component/**'
+    paths: 
+      - 'preprocessing_component/**'
+      - '.github/workflows/preprocessing-docker.yaml'
   workflow_dispatch:
   schedule:
     # Runs on the first day of every month at 00:00 UTC.

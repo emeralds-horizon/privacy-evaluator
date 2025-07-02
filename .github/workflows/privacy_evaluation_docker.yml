@@ -3,7 +3,9 @@ name: privacy-evaluation-docker
 on:
   push:
     branches: [ "main", "ci_cd" ]
-    paths: 'privacy_evaluation_component/**'
+    paths: 
+      - 'privacy_evaluation_component/**'
+      - '.github/workflows/privacy_evaluation_docker.yml'
   workflow_dispatch:
   schedule:
     # Runs on the first day of every month at 00:00 UTC.
