@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: privacy-evaluation-service
-          image: ghcr.io/emeralds-horizon/privacy-evaluator:sha-4b26db0
+          image: ghcr.io/emeralds-horizon/privacy-evaluator:sha-782b49d
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
