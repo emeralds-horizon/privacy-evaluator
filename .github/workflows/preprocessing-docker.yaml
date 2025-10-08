@@ -2,7 +2,7 @@ name: preprocessing-docker
 
 on:
   push:
-    branches: [ "main", "ci_cd" ]
+    branches: [ "main", "ci_cd" ,"develop" ]
     paths: 
       - 'preprocessing_component/**'
       - '.github/workflows/preprocessing-docker.yaml'
