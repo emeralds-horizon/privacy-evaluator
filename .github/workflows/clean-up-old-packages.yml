@@ -1,0 +1,30 @@
+name: Clean old packages
+
+on:
+  schedule:
+    - cron: '0 5 1 * *'  
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - name: Delete old preprocessing images
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: privacy-evaluator-preprocessing
+          package-type: container
+          min-versions-to-keep: 3
+          delete-only-untagged-versions: false
+    
+      - name: Delete old privacy evaluation images
+        uses: actions/delete-package-versions@v5
+        with:
+            package-name: privacy-evaluator
+            package-type: container
+            min-versions-to-keep: 3
+            delete-only-untagged-versions: false
