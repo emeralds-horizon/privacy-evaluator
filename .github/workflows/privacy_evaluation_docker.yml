@@ -2,7 +2,7 @@ name: privacy-evaluation-docker
 
 on:
   push:
-    branches: [ "main", "ci_cd" ]
+    branches: [ "main", "ci_cd", "develop" ]
     paths: 
       - 'privacy_evaluation_component/**'
       - '.github/workflows/preprocessing-docker.yaml'
